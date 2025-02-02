@@ -19,11 +19,11 @@ func (x *OCHAT) Init() error {
 }
 
 func (x *OCHAT) ApiPath() string {
-	return "/api/ocr/rec"
+	return "/api/minicpmo/chat"
 }
 
 func (x *OCHAT) CustomQueue() string {
-	return helper.Settings.Customer["OCR_QUEUE"]
+	return helper.Settings.Customer["CPMO_QUEUE"]
 }
 
 func (x *OCHAT) ApiEntry(reqData *map[string]interface{}) (*map[string]interface{}, error) {
@@ -47,7 +47,7 @@ func (x *OCHAT) ApiEntry(reqData *map[string]interface{}) (*map[string]interface
 	}
 
 	// 检查图片大小
-	maxSize, _ := strconv.Atoi(helper.Settings.Customer["OCR_MAX_IMAGE_SIZE"])
+	maxSize, _ := strconv.Atoi(helper.Settings.Customer["CPMO_MAX_IMAGE_SIZE"])
 	if len(image) > maxSize {
 		return &map[string]interface{}{"code":9002}, fmt.Errorf("图片数据太大")
 	}

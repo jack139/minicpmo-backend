@@ -44,6 +44,8 @@ def load_image_b64(b64_data, max_size=None):
 def chat_w_image(question, image):
     msgs = [{'role': 'user', 'content': [image, question]}]
 
+    print(msgs)
+
     answer = model.chat(
         msgs=msgs,
         tokenizer=tokenizer
