@@ -55,6 +55,22 @@ def chat_w_image(question, image):
 
 
 if __name__ == '__main__':
-    image = Image.open('data/1-003.jpg').convert('RGB')
-    question = "OCR to extract text from images"
-    print(chat_w_image(question, image))
+    import sys
+    import readline
+
+    if len(sys.argv)<2:
+        print("usage: ochat.py <image-path>")
+        sys.exit(2)
+
+    image_path = sys.argv[1]
+
+    image = Image.open(image_path).convert('RGB')
+
+    while True:
+        question = input("请输入您的问题：")
+        if len(question.strip())==0:
+            sys.exit(0)
+
+        print("\n回答：\n", chat_w_image(question, image))
+
+    # 请一步一步思考，先获取图片中所有文字内容，如果其中有英文拼写错误先纠正拼写错误，然后将所有文字翻译为中文，尽可能翻译。翻译的中文前一定写上“译文：”。

@@ -21,7 +21,7 @@ cp modeling_minicpmo.py "<MiniCPM-o-2_6-int4 path>"
 ## 测试
 
 ```bash
-python3.9 ochat.py
+python3.9 ochat.py "<image-path>"
 ```
 
 
