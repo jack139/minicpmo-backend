@@ -6,22 +6,10 @@ from PIL import Image
 from transformers import AutoModel, AutoTokenizer
 from auto_gptq import AutoGPTQForCausalLM
 
-from settings import model_path, device
+from settings import model_path
 
 # 只使用图像功能
 os.environ["VISION_ONLY"] = "1"
-
-
-model = AutoGPTQForCausalLM.from_quantized(
-    model_path,
-    torch_dtype=torch.bfloat16,
-    device=device,
-    trust_remote_code=True,
-    disable_exllama=True,
-    disable_exllamav2=True
-)
-
-tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 
 
 # 将 base64 编码的图片转为 PIL.Image
@@ -40,18 +28,31 @@ def load_image_b64(b64_data, max_size=None):
     return img
 
 
-# 使用 图片 聊天 （单轮）
-def chat_w_image(question, image):
-    msgs = [{'role': 'user', 'content': [image, question]}]
+class OChat():
+    def __init__(self, model_path, device="cuda:0"):
+        self.model = AutoGPTQForCausalLM.from_quantized(
+            model_path,
+            torch_dtype=torch.bfloat16,
+            device=device,
+            trust_remote_code=True,
+            disable_exllama=True,
+            disable_exllamav2=True
+        )
 
-    #print(msgs)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 
-    answer = model.chat(
-        msgs=msgs,
-        tokenizer=tokenizer
-    )
+    # 使用 图片 聊天 （单轮）
+    def chat_w_image(self, question, image):
+        msgs = [{'role': 'user', 'content': [image, question]}]
 
-    return answer
+        #print(msgs)
+
+        answer = self.model.chat(
+            msgs=msgs,
+            tokenizer=self.tokenizer
+        )
+
+        return answer
 
 
 if __name__ == '__main__':
@@ -66,11 +67,13 @@ if __name__ == '__main__':
 
     image = Image.open(image_path).convert('RGB')
 
+    ochat = OChat(model_path)
+
     while True:
         question = input("请输入您的问题：")
         if len(question.strip())==0:
             sys.exit(0)
 
-        print("\n回答：\n", chat_w_image(question, image))
+        print("\n回答：\n", ochat.chat_w_image(question, image))
 
     # 请一步一步思考，先获取图片中所有文字内容，如果其中有英文拼写错误先纠正拼写错误，然后将所有文字翻译为中文，尽可能翻译。翻译的中文前一定写上“译文：”。

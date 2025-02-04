@@ -1,6 +1,5 @@
 # 模型设置
 model_path = "../../LLMs/lm_model/MiniCPM-o-2_6-int4"
-device = "cuda:0"
 
 # mongo DB 配置
 mongodb_ip = "127.0.0.1"

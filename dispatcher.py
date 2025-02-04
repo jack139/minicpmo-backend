@@ -9,12 +9,13 @@ import binascii
 
 from utils import helper
 from utils import logger
-from settings import REDIS_CONFIG, MAX_DISPATCHER_WORKERS
+from settings import REDIS_CONFIG, MAX_DISPATCHER_WORKERS, model_path
 
 import ochat
 
 logger = logger.get_logger(__name__)
 
+ochat_model = None
 
 # db connection: thread-safe
 #mongo = helper.mongo_conn()
@@ -26,7 +27,7 @@ def process_api(request_id, request_msg):
         if request['api']=='/api/minicpmo/chat': # 文本 OCR
             # base64 图片 转为 PIL.Image
             img = ochat.load_image_b64(request['params']['image'])
-            r1 = ochat.chat_w_image(request['params']['text'], img)
+            r1 = ochat_model.chat_w_image(request['params']['text'], img)
 
             # 记录日志
             #mongo.rag_log.insert_one({
@@ -85,15 +86,16 @@ def process_thread(msg_body):
 
 
 if __name__ == '__main__':
-    if len(sys.argv)<2:
-        print("usage: dispatcher.py <QUEUE_NO.>")
+    if len(sys.argv)<3:
+        print("usage: dispatcher.py <QUEUE_NO.> <gpu>")
         sys.exit(2)
 
     queue_no = sys.argv[1]
-    #gpu = sys.argv[2]
+    gpu = sys.argv[2]
 
     print('Request queue NO. ', queue_no)
 
+    ochat_model = ochat.OChat(model_path, device=f"cuda:{gpu}")
 
     sys.stdout.flush()
 
