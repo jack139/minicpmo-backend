@@ -1,5 +1,5 @@
 PY = python3.9 -O -m compileall -b -q -f
-SRC = easyocr utils *.py
+SRC = *.py
 TARGETS = build
 TEMP = 
 all: clean $(TARGETS)
