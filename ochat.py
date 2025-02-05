@@ -18,9 +18,10 @@ def load_image_b64(b64_data, max_size=None):
     tmp_buff = BytesIO(data)
     img = Image.open(tmp_buff).convert('RGB')
     tmp_buff.close()
+    width, height = img.size
+    print(width, height)
     # 压缩处理
     if max_size is not None:
-        width, height = img.size
         max_width = max(width, height)
         if max_width>max_size: # 图片最大宽度为 1500
             ratio = max_size/max_width
